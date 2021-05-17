@@ -1,0 +1,29 @@
+{
+  "name": "json-work-proof",
+  "version": "0.1.0",
+  "description": "JSON Work Proof (JWP) - proof-of-work algorithm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexeichhorn/node-json-work-proof.git"
+  },
+  "keywords": [
+    "json",
+    "jwp",
+    "proof-of-work",
+    "hashcash",
+    "ddos-prevention"
+  ],
+  "author": "Alexander Eichhorn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexeichhorn/node-json-work-proof/issues"
+  },
+  "homepage": "https://github.com/alexeichhorn/node-json-work-proof#readme",
+  "dependencies": {
+    "base64url": "^3.0.1"
+  }
+}
