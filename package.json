@@ -4,7 +4,7 @@
   "description": "JSON Work Proof (JWP) - proof-of-work algorithm",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,8 @@
   "homepage": "https://github.com/alexeichhorn/node-json-work-proof#readme",
   "dependencies": {
     "base64url": "^3.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^8.4.0"
   }
 }

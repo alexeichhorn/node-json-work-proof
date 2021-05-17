@@ -1,4 +1,5 @@
 const base64url = require('base64url')
+const crypto = require('crypto')
 
 Date.prototype.toJSON = function(){
     return Math.floor(this.getTime() / 1000)
@@ -27,7 +28,7 @@ class JWP {
     }
 
     _isZeroPrefixed(digest, bitCount=this.difficulty) {
-        digest.forEach(byte => {
+        for (var byte of digest) {
             if (bitCount == 0) return true
 
             if (bitCount >= 8) {
@@ -36,7 +37,7 @@ class JWP {
             } else {
                 return this._leadingZeroBitCount(byte) >= bitCount
             }
-        })
+        }
         return false
     }
 
