@@ -43,9 +43,28 @@ describe('JWP', function() {
     describe('expiration check', function() {
         this.timeout(60*1000) // 1 min
         
-        /*it('check if DateRanges work', function() {
-            //
-        })*/
+        it('check if DateRanges work', async function() {
+            const jwp = new JWP(20)
+
+            const stamp1 = "eyJ0eXAiOiJKV1AiLCJhbGciOiJTSEEyNTYiLCJkaWYiOjIwfQ.eyJleHAiOjE2MTY4NTA1NzAuNjU1MTQ3MSwiaGVsbG8iOiJ3b3JsZCJ9.VE6YYxIQ46lPzxyNuRYAmAMkEM"
+            let d = jwp.decode(stamp1, true, JWP.DateRange.unlimited)
+            assert.strictEqual(d.constructor, Object) // is dict
+            d = jwp.decode(stamp1, true, JWP.DateRange.startUntil(new Date(1616850383000), 5*60*1000))
+            assert.strictEqual(d.constructor, Object)
+            assert.throws(function() { jwp.decode(stamp1) }, JWP.ExpiredError)
+        })
+
+        it('check if DateRanges work with second stamp', async function() {
+            const jwp = new JWP(20)
+
+            const stamp2 = "eyJ0eXAiOiJKV1AiLCJhbGciOiJTSEEyNTYiLCJkaWYiOjIwfQ.eyJoZWxsbyI6IndvcmxkIn0.LCYdFqTlHkox8chJLRoPpQB5wC"
+            d = jwp.decode(stamp2, true, JWP.DateRange.unlimited)
+            assert.strictEqual(d.constructor, Object)
+            assert.throws(function() { jwp.decode(stamp2) }, JWP.ExpiredError)
+            assert.throws(function() { jwp.decode(stamp2, true, JWP.DateRange.durationTo(1000000000, new Date())) }, JWP.ExpiredError)
+            d = jwp.decode(stamp2, true, new JWP.DateRange(null, new Date()))
+            assert.strictEqual(d.constructor, Object)
+        })
     })
 
 
@@ -59,13 +78,13 @@ describe('JWP', function() {
             const hardStamp = "eyJ0eXAiOiJKV1AiLCJhbGciOiJTSEEyNTYiLCJkaWYiOjIwfQ.eyJleHAiOjE2MTY4NTA1NzAuNjU1MTQ3MSwiaGVsbG8iOiJ3b3JsZCJ9.VE6YYxIQ46lPzxyNuRYAmAMkEM"
             const easyStamp = "eyJ0eXAiOiJKV1AiLCJhbGciOiJTSEEyNTYiLCJkaWYiOjE1fQ.eyJoZWxsbyI6IndvcmxkIiwiZXhwIjoxNjE2ODUxODcyLjUyOTQwNDJ9.Rg1tRi9JUkw1Ls9WotkuaAFzs"
 
-            let d = await hardJWP.decode(hardStamp)
+            let d = hardJWP.decode(hardStamp, true, JWP.DateRange.unlimited)
             assert.strictEqual(d.constructor, Object)
-            assert.throws(function() { hardJWP.decode(easyStamp) }, JWP.InvalidProofError)
+            assert.throws(function() { hardJWP.decode(easyStamp, true, JWP.DateRange.unlimited) }, JWP.InvalidProofError)
 
-            d = await easyJWP.decode(hardStamp)
+            d = easyJWP.decode(hardStamp, true, JWP.DateRange.unlimited)
             assert.strictEqual(d.constructor, Object)
-            d = await easyJWP.decode(easyStamp)
+            d = easyJWP.decode(easyStamp, true, JWP.DateRange.unlimited)
             assert.strictEqual(d.constructor, Object)
         })
     })

@@ -7,6 +7,8 @@ Date.prototype.toJSON = function(){
 
 class JWP {
     
+    // - errors
+
     static InvalidFormatError = class InvalidProofError extends Error {
         constructor(message) {
             super(message)
@@ -28,8 +30,43 @@ class JWP {
         }
     }
 
+    
+    // - Date Range definition
 
-    static hello = "HELLLLOOOO"
+    static DateRange = class DateRange {
+
+        constructor(start, end) {
+            this.start = start
+            this.end = end
+        }
+
+        static startUntil(start, duration) {
+            return new DateRange(start, new Date(start.getTime() + duration))
+        }
+
+        static durationTo(duration, end) {
+            return new DateRange(new Date(end.getTime() - duration), end)
+        }
+
+        static fromNow(duration) {
+            return DateRange.startUntil(new Date(), duration)
+        }
+
+        static unlimited = new DateRange(null, null)
+
+        // - Checks
+
+        // checks if given date is inside date range
+        contains(date) {
+            if (this.start && date < this.start) {
+                return false
+            } else if (this.end && date > this.end) {
+                return false
+            }
+            return true
+        }
+
+    }
 
 
 
@@ -115,7 +152,7 @@ class JWP {
     }
 
 
-    decode(stamp, verify = true) {
+    decode(stamp, verify = true, expirationRange = JWP.DateRange.fromNow(1800*1000)) {
 
         const components = stamp.split('.')
         if (components.length != 3) throw new JWP.InvalidFormatError()
@@ -145,7 +182,13 @@ class JWP {
         
         // - check expiration range
         
-        // TODO:
+        let expiration = body.exp || 0
+        if (typeof expiration == 'string') expiration = parseFloat(expiration)
+        expiration = new Date(expiration * 1000)
+
+        if (!expirationRange.contains(expiration))
+            throw new JWP.ExpiredError
+        
 
         return body
     }
