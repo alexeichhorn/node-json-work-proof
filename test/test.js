@@ -49,8 +49,10 @@ describe('JWP', function() {
             const stamp1 = "eyJ0eXAiOiJKV1AiLCJhbGciOiJTSEEyNTYiLCJkaWYiOjIwfQ.eyJleHAiOjE2MTY4NTA1NzAuNjU1MTQ3MSwiaGVsbG8iOiJ3b3JsZCJ9.VE6YYxIQ46lPzxyNuRYAmAMkEM"
             let d = jwp.decode(stamp1, true, JWP.DateRange.unlimited)
             assert.strictEqual(d.constructor, Object) // is dict
+            assert.strictEqual(d.hello, 'world') // in body
             d = jwp.decode(stamp1, true, JWP.DateRange.startUntil(new Date(1616850383000), 5*60*1000))
             assert.strictEqual(d.constructor, Object)
+            assert.strictEqual(d.hello, 'world')
             assert.throws(function() { jwp.decode(stamp1) }, JWP.ExpiredError)
         })
 
@@ -60,10 +62,12 @@ describe('JWP', function() {
             const stamp2 = "eyJ0eXAiOiJKV1AiLCJhbGciOiJTSEEyNTYiLCJkaWYiOjIwfQ.eyJoZWxsbyI6IndvcmxkIn0.LCYdFqTlHkox8chJLRoPpQB5wC"
             d = jwp.decode(stamp2, true, JWP.DateRange.unlimited)
             assert.strictEqual(d.constructor, Object)
+            assert.strictEqual(d.hello, 'world')
             assert.throws(function() { jwp.decode(stamp2) }, JWP.ExpiredError)
             assert.throws(function() { jwp.decode(stamp2, true, JWP.DateRange.durationTo(1000000000, new Date())) }, JWP.ExpiredError)
             d = jwp.decode(stamp2, true, new JWP.DateRange(null, new Date()))
             assert.strictEqual(d.constructor, Object)
+            assert.strictEqual(d.hello, 'world')
         })
     })
 
@@ -80,12 +84,15 @@ describe('JWP', function() {
 
             let d = hardJWP.decode(hardStamp, true, JWP.DateRange.unlimited)
             assert.strictEqual(d.constructor, Object)
+            assert.strictEqual(d.hello, 'world')
             assert.throws(function() { hardJWP.decode(easyStamp, true, JWP.DateRange.unlimited) }, JWP.InvalidProofError)
 
             d = easyJWP.decode(hardStamp, true, JWP.DateRange.unlimited)
             assert.strictEqual(d.constructor, Object)
+            assert.strictEqual(d.hello, 'world')
             d = easyJWP.decode(easyStamp, true, JWP.DateRange.unlimited)
             assert.strictEqual(d.constructor, Object)
+            assert.strictEqual(d.hello, 'world')
         })
     })
 
