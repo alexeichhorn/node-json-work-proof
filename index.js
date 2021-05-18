@@ -6,6 +6,32 @@ Date.prototype.toJSON = function(){
 }
 
 class JWP {
+    
+    static InvalidFormatError = class InvalidProofError extends Error {
+        constructor(message) {
+            super(message)
+            this.name = "JWP.InvalidFormat"
+        }
+    }
+    
+    static InvalidProofError = class InvalidProofError extends Error {
+        constructor(message) {
+            super(message)
+            this.name = "JWP.InvalidProof"
+        }
+    }
+    
+    static ExpiredError = class ExpiredError extends Error {
+        constructor(message) {
+            super(message)
+            this.name = "JWP.Expired"
+        }
+    }
+
+
+    static hello = "HELLLLOOOO"
+
+
 
     constructor(difficulty = 20, saltLength = 16) {
         this.difficulty = difficulty
@@ -86,6 +112,42 @@ class JWP {
 
             counter++
         }
+    }
+
+
+    decode(stamp, verify = true) {
+
+        const components = stamp.split('.')
+        if (components.length != 3) throw new JWP.InvalidFormatError()
+
+        const encodedHeader = components[0]
+        const encodedBody = components[1]
+
+        const headerData = base64url.decode(encodedHeader)
+        const bodyData = base64url.decode(encodedBody)
+
+        const header = JSON.parse(headerData)
+        const body = JSON.parse(bodyData)
+
+        if (!verify) return body
+
+        // TODO: check alogrithm in header
+
+        // - check proof
+
+        const hasher = crypto.createHash('sha256')
+        hasher.update(stamp)
+        const digest = hasher.digest()
+
+        if (!this._isZeroPrefixed(digest, this.difficulty))
+            throw new JWP.InvalidProofError()
+        
+        
+        // - check expiration range
+        
+        // TODO:
+
+        return body
     }
 
 }
