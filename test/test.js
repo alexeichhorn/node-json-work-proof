@@ -98,7 +98,23 @@ describe('JWP', function() {
 
 
     describe('invalid proof check', function() {
+        const jwp = new JWP()
 
+        it('check valid stamp', function() {
+            const validStamp = "eyJ0eXAiOiJKV1AiLCJhbGciOiJTSEEyNTYiLCJkaWYiOjIwfQ.eyJleHAiOjE2MTY4NTA1NzAuNjU1MTQ3MSwiaGVsbG8iOiJ3b3JsZCJ9.VE6YYxIQ46lPzxyNuRYAmAMkEM"
+            let d = jwp.decode(validStamp, true, JWP.DateRange.unlimited)
+            assert.strictEqual(d.constructor, Object)
+            assert.strictEqual(d.hello, 'world')
+        })
+
+        it('check invalid stamp', function() {
+            const invalidStamp = "eyJ0eXAiOiJKV1AiLCJhbGciOiJTSEEyNTYiLCJkaWYiOjIwfQ.eyJleHAiOjE2MTY4NTA1NzAuNjU1MTQ3MSwiaGVsbG8iOiJ3b3JsZCJ9.VE6YYxIQ46lPzxyNuRYAmAMkEC"
+            let d = jwp.decode(invalidStamp, false) // without verification
+            assert.strictEqual(d.constructor, Object)
+            assert.strictEqual(d.hello, 'world')
+
+            assert.throws(function() { jwp.decode(invalidStamp, true, JWP.DateRange.unlimited) }, JWP.InvalidProofError)
+        })
     })
 
 
