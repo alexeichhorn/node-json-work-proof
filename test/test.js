@@ -34,8 +34,23 @@ describe('JWP', function() {
     describe('generate and check', function() {
         this.timeout(3*60*1000) // 3 min
 
-        it('repeated generation and checking with random content', async function() {
+        it('difficulty: default (20),  count: 5', async function() {
             generateAndCheck(new JWP(), 5)
+        })
+        it('difficulty: 22,  count: 2', async function() {
+            generateAndCheck(new JWP(22), 2)
+        })
+        it('difficulty: 18,  count: 5', async function() {
+            generateAndCheck(new JWP(18), 5)
+        })
+        it('difficulty: 15,  count: 10', async function() {
+            generateAndCheck(new JWP(15), 10)
+        })
+        it('difficulty: 5,  count: 10', async function() {
+            generateAndCheck(new JWP(5), 10)
+        })
+        it('difficulty: 15,   salt length: 100,  count: 5', async function() {
+            generateAndCheck(new JWP(15, 100), 5)
         })
     })
 
