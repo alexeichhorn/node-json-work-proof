@@ -5,70 +5,25 @@ Date.prototype.toJSON = function(){
     return Math.floor(this.getTime() / 1000)
 }
 
+Uint8Array.prototype.incremented = function() {
+    var i = 0
+    while (this[i] !== undefined && this[i] == 0xFF) {
+        this[i] = 0
+        i++
+    }
+
+    if (this[i] !== undefined) {
+        this[i]++
+    } else {
+        var res = new Uint8Array(this.length+1)
+        res.set([1], this.length) // [0x01, 0x00, ..., 0x00]
+        return res
+    }
+
+    return this
+}
+
 class JWP {
-    
-    // - errors
-
-    static InvalidFormatError = class InvalidProofError extends Error {
-        constructor(message) {
-            super(message)
-            this.name = "JWP.InvalidFormat"
-        }
-    }
-    
-    static InvalidProofError = class InvalidProofError extends Error {
-        constructor(message) {
-            super(message)
-            this.name = "JWP.InvalidProof"
-        }
-    }
-    
-    static ExpiredError = class ExpiredError extends Error {
-        constructor(message) {
-            super(message)
-            this.name = "JWP.Expired"
-        }
-    }
-
-    
-    // - Date Range definition
-
-    static DateRange = class DateRange {
-
-        constructor(start, end) {
-            this.start = start
-            this.end = end
-        }
-
-        static startUntil(start, duration) {
-            return new DateRange(start, new Date(start.getTime() + duration))
-        }
-
-        static durationTo(duration, end) {
-            return new DateRange(new Date(end.getTime() - duration), end)
-        }
-
-        static fromNow(duration) {
-            return DateRange.startUntil(new Date(), duration)
-        }
-
-        static unlimited = new DateRange(null, null)
-
-        // - Checks
-
-        // checks if given date is inside date range
-        contains(date) {
-            if (this.start && date < this.start) {
-                return false
-            } else if (this.end && date > this.end) {
-                return false
-            }
-            return true
-        }
-
-    }
-
-
 
     constructor(difficulty = 20, saltLength = 16) {
         this.difficulty = difficulty
@@ -127,14 +82,11 @@ class JWP {
         //const leadingHasher = crypto.createHash('sha256')
         //leadingHasher.update(challengeData)
 
-        var counter = 0n // 64bit
+        var counter = new Uint8Array(1)
 
         // TODO: make completely async
         while (true) {
-            let b = new ArrayBuffer(8)
-            new DataView(b).setBigUint64(0, counter) // maybe remove leading 0s
-
-            const encodedProof = base64url(b)
+            const encodedProof = base64url(counter)
             const proofData = textEncoder.encode(encodedProof)
 
             //const hash = await crypto.subtle.digest('SHA-256', challengeData+proofData)
@@ -147,7 +99,7 @@ class JWP {
                 return challenge + encodedProof
             }
 
-            counter++
+            counter = counter.incremented() //counter++
         }
     }
 
@@ -191,6 +143,68 @@ class JWP {
         
 
         return body
+    }
+
+}
+
+
+// - errors
+
+JWP.InvalidFormatError = class InvalidProofError extends Error {
+    constructor(message) {
+        super(message)
+        this.name = "JWP.InvalidFormat"
+    }
+}
+    
+JWP.InvalidProofError = class InvalidProofError extends Error {
+    constructor(message) {
+        super(message)
+        this.name = "JWP.InvalidProof"
+    }
+}
+
+JWP.ExpiredError = class ExpiredError extends Error {
+    constructor(message) {
+        super(message)
+        this.name = "JWP.Expired"
+    }
+}
+
+
+// - Date Range
+
+JWP.DateRange = class DateRange {
+
+    constructor(start, end) {
+        this.start = start
+        this.end = end
+    }
+
+    static startUntil(start, duration) {
+        return new DateRange(start, new Date(start.getTime() + duration))
+    }
+
+    static durationTo(duration, end) {
+        return new DateRange(new Date(end.getTime() - duration), end)
+    }
+
+    static fromNow(duration) {
+        return DateRange.startUntil(new Date(), duration)
+    }
+
+    static unlimited = new DateRange(null, null)
+
+    // - Checks
+
+    // checks if given date is inside date range
+    contains(date) {
+        if (this.start && date < this.start) {
+            return false
+        } else if (this.end && date > this.end) {
+            return false
+        }
+        return true
     }
 
 }

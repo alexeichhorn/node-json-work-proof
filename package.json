@@ -1,6 +1,6 @@
 {
   "name": "json-work-proof",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "JSON Work Proof (JWP) - proof-of-work algorithm",
   "main": "index.js",
   "scripts": {

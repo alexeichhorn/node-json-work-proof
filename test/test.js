@@ -148,4 +148,46 @@ describe('JWP', function() {
         })
     })
 
+
+    describe('buffer incremented', function() {
+        it('0x0', function() {
+            const buf = new Uint8Array(1)
+            const res = buf.incremented()
+            assert.deepStrictEqual(res, Uint8Array.from([1]))
+        })
+        it('0xFE', function() {
+            const buf = new Uint8Array(1)
+            buf[0] = 0xFE
+            const res = buf.incremented()
+            assert.deepStrictEqual(res, Uint8Array.from([0xFF]))
+        })
+        it('0xFF', function() {
+            const buf = new Uint8Array(1)
+            buf[0] = 0xFF
+            const res = buf.incremented()
+            assert.deepStrictEqual(res, Uint8Array.from([0x0, 0x1]))
+        })
+        it('0x26FF', function() {
+            const buf = new Uint8Array(2)
+            buf[0] = 0x26
+            buf[1] = 0xFF
+            const res = buf.incremented()
+            assert.deepStrictEqual(res, Uint8Array.from([0x27, 0xFF]))
+        })
+        it('0xFF26', function() {
+            const buf = new Uint8Array(2)
+            buf[0] = 0xFF
+            buf[1] = 0x26
+            const res = buf.incremented()
+            assert.deepStrictEqual(res, Uint8Array.from([0x00, 0x27]))
+        })
+        it('0xFFFF', function() {
+            const buf = new Uint8Array(2)
+            buf[0] = 0xFF
+            buf[1] = 0xFF
+            const res = buf.incremented()
+            assert.deepStrictEqual(res, Uint8Array.from([0x0, 0x0, 0x1]))
+        })
+    })
+
 })
