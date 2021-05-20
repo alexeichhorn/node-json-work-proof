@@ -1,6 +1,12 @@
 const base64url = require('base64url')
-const crypto = require('crypto')
 const sleep = (time) => new Promise(r => setTimeout(r, time))
+
+let crypto
+try {
+    crypto = require('crypto')
+} catch {
+    if (window !== undefined) crypto = window.crypto
+}
 
 Date.prototype.toJSON = function(){
     return Math.floor(this.getTime() / 1000)
