@@ -19,7 +19,7 @@ async function generateAndCheck(jwp, count = 10) {
 describe('JWP', function() {
 
     describe('test single', function() {
-        this.timeout(20*1000) // 20 sec
+        this.timeout(60*1000) // 60 sec
 
         it('single generation', function(done) {
             const jwp = new JWP(20)
