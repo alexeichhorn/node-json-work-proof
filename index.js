@@ -174,7 +174,9 @@ JWP.ExpiredError = class ExpiredError extends Error {
 
 // - Date Range
 
-JWP.DateRange = class DateRange {
+var _dr
+
+JWP.DateRange = (_dr = class DateRange {
 
     constructor(start, end) {
         this.start = start
@@ -193,7 +195,7 @@ JWP.DateRange = class DateRange {
         return DateRange.startUntil(new Date(), duration)
     }
 
-    static unlimited = new DateRange(null, null)
+    //static unlimited = new DateRange(null, null)
 
     // - Checks
 
@@ -207,6 +209,8 @@ JWP.DateRange = class DateRange {
         return true
     }
 
-}
+},
+_dr.unlimited = new _dr(null, null),
+_dr)
 
 module.exports = JWP
