@@ -1,5 +1,6 @@
 const base64url = require('base64url')
 const crypto = require('crypto')
+const sleep = (time) => new Promise(r => setTimeout(r, time))
 
 Date.prototype.toJSON = function(){
     return Math.floor(this.getTime() / 1000)
@@ -84,7 +85,6 @@ class JWP {
 
         var counter = new Uint8Array(1)
 
-        // TODO: make completely async
         while (true) {
             const encodedProof = base64url(counter)
             const proofData = textEncoder.encode(encodedProof)
@@ -98,6 +98,8 @@ class JWP {
             if (this._isZeroPrefixed(hash)) {
                 return challenge + encodedProof
             }
+
+            if (Math.random() < 1e-4) await sleep(0)
 
             counter = counter.incremented() //counter++
         }
