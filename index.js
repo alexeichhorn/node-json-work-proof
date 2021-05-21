@@ -38,7 +38,12 @@ class JWP {
     }
 
     _generateSalt() {
-        return crypto.randomBytes(this.saltLength)
+        try {
+            return crypto.randomBytes(this.saltLength)
+        } catch {
+            let bytes = new Uint8Array(this.saltLength)
+            return crypto.getRandomValues(bytes.slice(0, 65536)) // 65536 is theorectial max length
+        }
     }
 
     _leadingZeroBitCount(byte) {
