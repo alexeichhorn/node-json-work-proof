@@ -1,11 +1,17 @@
 const base64url = require('base64url')
+const sha256 = require('sha256-wasm')
 const sleep = (time) => new Promise(r => setTimeout(r, time))
 
 let crypto
+let useCrypto = false
 try {
     crypto = require('crypto')
+    useCrypto = (crypto.createHash !== undefined)
 } catch {
-    if (window !== undefined) crypto = window.crypto
+    if (window !== undefined) {
+        crypto = window.crypto
+        useCrypto = (crypto.createHash !== undefined)
+    }
 }
 
 Date.prototype.toJSON = function(){
@@ -101,7 +107,7 @@ class JWP {
             const proofData = textEncoder.encode(encodedProof)
 
             //const hash = await crypto.subtle.digest('SHA-256', challengeData+proofData)
-            const hasher = crypto.createHash('sha256')
+            const hasher = useCrypto ? crypto.createHash('sha256') : sha256()
             hasher.update(challengeData)
             hasher.update(proofData)
             const hash = hasher.digest()
@@ -137,7 +143,7 @@ class JWP {
 
         // - check proof
 
-        const hasher = crypto.createHash('sha256')
+        const hasher = useCrypto ? crypto.createHash('sha256') : sha256()
         hasher.update(stamp)
         const digest = hasher.digest()
 

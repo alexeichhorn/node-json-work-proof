@@ -1,6 +1,6 @@
 {
   "name": "json-work-proof",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "JSON Work Proof (JWP) - proof-of-work algorithm",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/alexeichhorn/node-json-work-proof#readme",
   "dependencies": {
-    "base64url": "github:alexeichhorn/base64url"
+    "base64url": "github:alexeichhorn/base64url",
+    "sha256-wasm": "^2.2.1"
   },
   "devDependencies": {
     "mocha": "^8.4.0"
